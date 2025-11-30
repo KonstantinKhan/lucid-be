@@ -44,9 +44,6 @@ lucid-be-transport-openapi
 # Run tests
 ./gradlew test
 
-# Regenerate OpenAPI models
-./gradlew :lucid-be-transport-openapi:build
-
 # Clean build
 ./gradlew clean build
 ```
@@ -95,11 +92,11 @@ Understand the rationale behind technical decisions in [Architecture Decision Re
 
 Detailed module-specific information:
 
-| Module | Purpose | Quick Reference |
-|--------|---------|-----------------|
-| [ktor-app](docs/modules/ktor-app.md) | HTTP server (Ktor 3.3.2, Netty engine) | Build, run, test commands |
-| [common](docs/modules/common.md) | Domain models (Task, TaskStatus) | Domain patterns, validation |
-| [transport-openapi](docs/modules/transport-openapi.md) | Generated API models | Build pipeline, regeneration |
+| Module                                                 | Purpose                                | Quick Reference              |
+|--------------------------------------------------------|----------------------------------------|------------------------------|
+| [ktor-app](docs/modules/ktor-app.md)                   | HTTP server (Ktor 3.3.2, Netty engine) | Build, run, test commands    |
+| [common](docs/modules/common.md)                       | Domain models (Task, TaskStatus)       | Domain patterns, validation  |
+| [transport-openapi](docs/modules/transport-openapi.md) | Generated API models                   | Build pipeline, regeneration |
 
 ## Additional Resources
 

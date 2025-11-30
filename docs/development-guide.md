@@ -89,12 +89,12 @@ BUILD SUCCESSFUL
 
 Follow the project's package naming pattern:
 
-| Module Type | Root Package | Example |
-|-------------|--------------|---------|
-| Main application | `com.khan366kos` | `com.khan366kos` (no sub-package) |
-| Transport/API | `com.khan366kos.transport.{category}` | `com.khan366kos.transport.model` |
-| Domain/Common | `com.khan366kos.common.{category}` | `com.khan366kos.common.model` |
-| Utilities | `com.khan366kos.util.{category}` | `com.khan366kos.util.validation` |
+| Module Type      | Root Package                          | Example                           |
+|------------------|---------------------------------------|-----------------------------------|
+| Main application | `com.khan366kos`                      | `com.khan366kos` (no sub-package) |
+| Transport/API    | `com.khan366kos.transport.{category}` | `com.khan366kos.transport.model`  |
+| Domain/Common    | `com.khan366kos.common.{category}`    | `com.khan366kos.common.model`     |
+| Utilities        | `com.khan366kos.util.{category}`      | `com.khan366kos.util.validation`  |
 
 ### Module Dependency Guidelines
 

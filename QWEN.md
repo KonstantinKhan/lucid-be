@@ -1,69 +1,123 @@
 # QWEN.md
 
-## Project overview
+## Project Overview
 
-This is a Kotlin backend project built with the Ktor framework.
-
-The project includes an [OpenAPI specification](#api-specification) for a "Task API".
+Kotlin backend project built with the Ktor framework, implementing a Task API with multi-module architecture for clean separation between domain logic, API contracts, and HTTP handling.
 
 ## Architecture
 
-The project uses a multi-module architecture
+The project uses a multi-module architecture with clear dependency flow:
 
-| module                                                   | description                                                        | documentation                                             |
-|----------------------------------------------------------|--------------------------------------------------------------------|-----------------------------------------------------------|
-| [lucid-be-ktor-app](lucid-be-ktor-app)                   | An application for processing HTTP-requests and working with tasks | [ktor-app.md](docs/modules/ktor-app.md)                   |
-| [lucid-be-transport-openapi](lucid-be-transport-openapi) | OpenAPI specification bundling and Kotlin model code generation    | [transport-openapi.md](docs/modules/transport-openapi.md) |
+| Module                                                   | Description                                                | Documentation                                             |
+|----------------------------------------------------------|------------------------------------------------------------|-----------------------------------------------------------|
+| [lucid-be-ktor-app](lucid-be-ktor-app)                   | HTTP server application (Ktor + Netty)                     | [ktor-app.md](docs/modules/ktor-app.md)                   |
+| [lucid-be-common](lucid-be-common)                       | Domain models & business logic                             | [common.md](docs/modules/common.md)                       |
+| [lucid-be-transport-openapi](lucid-be-transport-openapi) | OpenAPI specs & generated models                           | [transport-openapi.md](docs/modules/transport-openapi.md) |
+| [lucid-be-mappers](lucid-be-mappers)                     | Mappers for converting between domain and transport models | [mappers.md](docs/modules/mappers.md)                     |
 
-## API Specification
+**Module Dependency Graph:**
+```
+lucid-be-ktor-app
+├── depends on → lucid-be-common
+├── depends on → lucid-be-transport-openapi
+└── depends on → lucid-be-mappers
 
-[Full API Specification](./docs/api_description.md)
+lucid-be-mappers
+├── depends on → lucid-be-common
+└── depends on → lucid-be-transport-openapi
 
-[API Specification Conventions](./docs/api_convention.md)
+lucid-be-common
+└── (no project dependencies)
 
-## Development Conventions
+lucid-be-transport-openapi
+└── (no project dependencies)
+```
 
-### Code Style
+## Quick Reference
 
-- Follow Kotlin official coding conventions (`kotlin.code.style=official`)
-- Prefer immutable values (val) over mutable variables (var)
-- Use data classes for models and DTOs
+### Common Commands
 
-### Project Structure
+```bash
+# Build all modules
+./gradlew build
 
-- Multi-module architecture with clear separation of concerns
-- Each module has single, well-defined responsibility
+# Build specific module
+./gradlew :module-name:build
 
-### Build System
+# Run application
+./gradlew :lucid-be-ktor-app:run
 
-- Gradle with Kotlin DSL
-- Version catalog in `gradle/libs.versions.toml` for centralized dependency management
+# Run specific module tests
+./gradlew :module-name:test
 
-### OpenAPI Workflow
+# Clean build
+./gradlew clean build
+```
 
-1. Update OpenAPI specifications in `specs/` directory
-2. Run `./gradlew :lucid-be-transport-openapi:build` to regenerate models
-3. Generated code is in `build/` directory and not version controlled
-4. Use generated models in `lucid-be-ktor-app` module
+### File Locations
 
-### Serialization
+See [File Locations Guide](docs/guides/file-locations.md) for comprehensive reference on where files belong.
 
-- **ktor-app module:** kotlinx.serialization (Ktor standard)
-- **transport-openapi module:** Jackson (OpenAPI Generator standard)
-- Both approaches coexist intentionally for tool compatibility
+### Dependencies
 
-### Database
+See [Dependency Management Guide](docs/guides/dependencies.md) for adding libraries and managing module dependencies.
 
-- Exposed SQL framework for database operations
-- PostgreSQL for production
-- H2 for testing
+### Development Standards
+
+See [Conventions Guide](docs/guides/conventions.md) for coding standards, patterns, and best practices.
 
 ### Testing
 
-- JUnit test framework
-- Ktor test host for integration tests
+This project uses both Kotlin's built-in test framework and Kotest for different modules. See [Testing Guide](docs/guides/testing.md) for comprehensive information about testing patterns and practices.
 
-### Git Workflow
+## How-To Guides
 
-- Main branch: `main`
-- Generated code excluded from version control
+Complete practical guides in [Development Guide](docs/development-guide.md):
+
+- [Adding a Module](docs/development-guide.md#adding-a-module) - Create new Gradle module with proper structure
+- [Adding a Domain Model](docs/development-guide.md#adding-a-domain-model) - Create business entities in common module
+- [Adding an API Endpoint](docs/development-guide.md#adding-an-api-endpoint) - Define OpenAPI spec and implement handlers
+- [Creating Mappers](docs/development-guide.md#creating-mappers) - Convert between domain and transport models
+- [Adding Dependencies](docs/development-guide.md#adding-dependencies) - Use version catalog pattern
+- [Testing Patterns](docs/development-guide.md#testing-patterns) - Unit and integration test examples
+- [Common Gotchas](docs/development-guide.md#common-gotchas) - Solutions to frequent issues
+
+## Architecture & Design
+
+Understand the rationale behind technical decisions in [Architecture Decision Records](docs/architecture-decisions.md):
+
+- [Multi-Module Architecture](docs/architecture-decisions.md#1-multi-module-architecture) - Why separate modules
+- [Dual Serialization Strategy](docs/architecture-decisions.md#2-dual-serialization-strategy) - kotlinx.serialization + Jackson
+- [Separate Domain and Transport Models](docs/architecture-decisions.md#3-separate-domain-and-transport-models) - Layer separation
+- [Time Type Choices](docs/architecture-decisions.md#4-time-type-choices) - Instant vs OffsetDateTime
+- [Module Dependency Principles](docs/architecture-decisions.md#5-module-dependency-principles) - Dependency rules
+- [OpenAPI-First API Design](docs/architecture-decisions.md#6-openapi-first-api-design) - Spec-first approach
+
+## API Documentation
+
+- [API Specification](docs/api_description.md) - OpenAPI spec structure and organization
+- [API Conventions](docs/api_convention.md) - Modular spec composition principles
+
+## Module Documentation
+
+Detailed module-specific information:
+
+| Module                                                 | Purpose                                                    | Quick Reference              |
+|--------------------------------------------------------|------------------------------------------------------------|------------------------------|
+| [ktor-app](docs/modules/ktor-app.md)                   | HTTP server (Ktor 3.3.2, Netty engine)                     | Build, run, test commands    |
+| [common](docs/modules/common.md)                       | Domain models (Task, TaskStatus)                           | Domain patterns, validation  |
+| [transport-openapi](docs/modules/transport-openapi.md) | Generated API models                                       | Build pipeline, regeneration |
+| [mappers](docs/modules/mappers.md)                     | Mappers for converting between domain and transport models | Mapping patterns, utilities  |
+
+## Additional Resources
+
+**Guides:**
+- [Development Guide](docs/development-guide.md) - Practical how-to guides for common tasks
+- [File Locations Guide](docs/guides/file-locations.md) - Where different file types belong
+- [Dependencies Guide](docs/guides/dependencies.md) - Managing project dependencies
+- [Conventions Guide](docs/guides/conventions.md) - Coding standards and patterns
+
+**Reference:**
+- [Architecture Decisions](docs/architecture-decisions.md) - ADRs explaining design choices
+- [Module Documentation](docs/modules/) - Detailed per-module information
+- [API Documentation](docs/api_description.md) - OpenAPI specification details

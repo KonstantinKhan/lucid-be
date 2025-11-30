@@ -61,10 +61,10 @@ fun TransportTask.Status.toDomain(): DomainTaskStatus = when (this) {
 
 // Time conversion helpers
 
-private fun Instant.toOffsetDateTime(): OffsetDateTime =
+fun Instant.toOffsetDateTime(): OffsetDateTime =
     OffsetDateTime.ofInstant(this.toJavaInstant(), ZoneOffset.UTC)
 
-private fun OffsetDateTime.toKotlinInstant(): Instant {
+fun OffsetDateTime.toKotlinInstant(): Instant {
     val javaInstant: java.time.Instant = this.toInstant()
     return javaInstant.toKotlinInstant()
 }

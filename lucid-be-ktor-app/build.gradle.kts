@@ -16,8 +16,8 @@ dependencies {
     implementation(project(":lucid-be-common"))
     implementation(project(":lucid-be-transport-openapi"))
 
-    // kotlinx-datetime for time conversions in mappers
-    implementation(libs.kotlinx.datetime)
+    // Mappers
+    implementation(project(":lucid-be-mappers"))
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)

@@ -4,15 +4,15 @@
 
 ## Quick Reference
 
-| Property | Value |
-|----------|-------|
-| **Purpose** | Domain models with business validation |
+| Property         | Value                                                   |
+|------------------|---------------------------------------------------------|
+| **Purpose**      | Domain models with business validation                  |
 | **Dependencies** | kotlinx-serialization (1.6.0), kotlinx-datetime (0.6.0) |
-| **Package** | `com.khan366kos.common.model` |
-| **Used by** | lucid-be-ktor-app |
-| **Build** | `./gradlew :lucid-be-common:build` |
-| **Test** | `./gradlew :lucid-be-common:test` |
-| **Models** | Task, TaskStatus |
+| **Package**      | `com.khan366kos.common.model`                           |
+| **Used by**      | lucid-be-ktor-app                                       |
+| **Build**        | `./gradlew :lucid-be-common:build`                      |
+| **Test**         | `./gradlew :lucid-be-common:test`                       |
+| **Models**       | Task, TaskStatus                                        |
 
 **Key Characteristics:**
 - Immutable data classes (`val` properties)

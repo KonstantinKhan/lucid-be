@@ -134,7 +134,7 @@ val updated = task.copy(
 
 The ktor-app module contains mappers to convert between domain and transport models:
 
-**Location:** `com.khan366kos.mappers.TaskMappers`
+**Location:** [com.khan366kos.mappers.TaskMappers](../../lucid-be-mappers/src/main/kotlin/com/khan366kos/mappers/TaskMappers.kt)
 
 ```kotlin
 import com.khan366kos.mappers.toTransport

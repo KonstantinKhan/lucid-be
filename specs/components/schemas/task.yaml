@@ -1,0 +1,41 @@
+Task:
+  type: object
+  properties:
+    id: { type: string }
+    title: { type: string }
+    description: { type: string, nullable: true }
+    createdAt: { type: string, format: date-time }
+    updatedAt: { type: string, format: date-time }
+    status:
+      type: string
+      enum: [new, in_progress, done, canceled]
+    authorId: { type: string }
+    assigneeIds:
+      type: array
+      items: { type: string }
+    priority: { type: integer, nullable: true }
+    plannedTime: { type: integer, nullable: true }
+    actualTime: { type: integer, nullable: true }
+  required:
+    - id
+    - title
+    - createdAt
+    - updatedAt
+    - status
+    - authorId
+
+TaskCreateRequest:
+  type: object
+  properties:
+    title: { type: string }
+    description: { type: string, nullable: true }
+  required: [title]
+
+TaskUpdateRequest:
+  type: object
+  properties:
+    title: { type: string }
+    description: { type: string, nullable: true }
+    status:
+      type: string
+      enum: [new, in_progress, done, canceled]

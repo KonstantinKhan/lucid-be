@@ -1,0 +1,13 @@
+NotFound:
+  description: Resource not found
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/error.yaml#/Error"
+
+BadRequest:
+  description: Bad request
+  content:
+    application/json:
+      schema:
+        $ref: "../schemas/error.yaml#/Error"

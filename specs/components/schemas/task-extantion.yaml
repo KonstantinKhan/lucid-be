@@ -1,0 +1,29 @@
+PriorityUpdate:
+  type: object
+  properties:
+    priority:
+      type: integer
+      minimum: 1
+      maximum: 5
+  required: [priority]
+
+PriorityResponse:
+  type: object
+  properties:
+    taskId: { type: string }
+    priority: { type: integer }
+    updatedAt: { type: string, format: date-time }
+
+TimeUpdate:
+  type: object
+  properties:
+    plannedTime: { type: integer }
+    actualTime: { type: integer }
+
+TimeResponse:
+  type: object
+  properties:
+    taskId: { type: string }
+    plannedTime: { type: integer }
+    actualTime: { type: integer }
+    updatedAt: { type: string, format: date-time }

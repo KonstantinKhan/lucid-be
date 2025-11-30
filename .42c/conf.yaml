@@ -1,0 +1,5 @@
+apis:
+  specs/lucid-task-spec.yaml:
+    alias: "tasks-api"
+  specs/lucid-spec.yaml:
+    alias: "lucid-api"

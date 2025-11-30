@@ -1,0 +1,120 @@
+paths:
+  /tasks:
+    get:
+      summary: List tasks
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "../components/schemas/task.yaml#/Task"
+
+    post:
+      summary: Create task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/task.yaml#/TaskCreateRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "../components/schemas/task.yaml#/Task"
+
+  /tasks/{taskId}:
+    parameters:
+      - $ref: "../components/parameters/task.yaml#/TaskId"
+
+    get:
+      summary: Get task by ID
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "../components/schemas/task.yaml#/Task"
+        "404":
+          $ref: "../components/responses/error.yaml#/NotFound"
+
+    patch:
+      summary: Update task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/task.yaml#/TaskUpdateRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "../components/schemas/task.yaml#/Task"
+        "400":
+          $ref: "../components/responses/error.yaml#/BadRequest"
+        "404":
+          $ref: "../components/responses/error.yaml#/NotFound"
+
+    delete:
+      summary: Delete task
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "../components/responses/error.yaml#/NotFound"
+
+  /tasks/{taskId}/priority:
+    parameters:
+      - $ref: "../components/parameters/task.yaml#/TaskId"
+
+    # put:
+    #   summary: Set priority
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: "../components/schemas/task-extensions.yaml#/PriorityUpdate"
+    #   responses:
+    #     "200":
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: "../components/schemas/task-extensions.yaml#/PriorityResponse"
+    #     "404":
+    #       $ref: "../components/responses/error.yaml#/NotFound"
+
+    delete:
+      summary: Remove priority
+      responses:
+        "204":
+          description: Removed
+        "404":
+          $ref: "../components/responses/error.yaml#/NotFound"
+
+  /tasks/{taskId}/time:
+    parameters:
+      - $ref: "../components/parameters/task.yaml#/TaskId"
+
+    # put:
+    #   summary: Set time tracking
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: "../components/schemas/task-extensions.yaml#/TimeUpdate"
+    #   responses:
+    #     "200":
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: "../components/schemas/task-extensions.yaml#/TimeResponse"
+        "404":
+          $ref: "../components/responses/error.yaml#/NotFound"

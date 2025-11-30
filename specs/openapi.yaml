@@ -1,0 +1,32 @@
+openapi: 3.1.0
+
+info:
+  title: Modular Task API
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com
+
+paths:
+  /tasks:
+    $ref: "./domains/tasks.yaml#/paths/~1tasks"
+
+  /tasks/{taskId}:
+    $ref: "./domains/tasks.yaml#/paths/~1tasks~1{taskId}"
+
+  /tasks/{taskId}/priority:
+    $ref: "./domains/tasks.yaml#/paths/~1tasks~1{taskId}~1priority"
+
+  /tasks/{taskId}/time:
+    $ref: "./domains/tasks.yaml#/paths/~1tasks~1{taskId}~1time"
+
+components:
+  schemas: {}
+  parameters:
+    TaskId:
+      $ref: "./components/parameters/task.yaml#/TaskId"
+  responses:
+    NotFound:
+      $ref: "./components/responses/error.yaml#/NotFound"
+    BadRequest:
+      $ref: "./components/responses/error.yaml#/BadRequest"

@@ -1,0 +1,6 @@
+description = "Provide a step-by-step plan for changes without starting implementation."
+prompt = """
+ATTENTION: The user has requested that you create a plan first. Do not execute any tools that modify the system (e.g., writing files, running commands). First, present a comprehensive step-by-step plan for completing the task. Get user approval before proceeding with implementation.
+
+Task: {{args}}
+"""

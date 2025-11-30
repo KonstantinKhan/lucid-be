@@ -1,0 +1,408 @@
+{
+    "version": "2.0.0",
+    "runtimeConfiguration": {
+        "environment": "default",
+        "laxTestingModeEnabled": false,
+        "apiConnectivityCheck": true,
+        "logLevel": "error",
+        "logDestination": "stdout+platform",
+        "logMaxFileSize": 2147483648,
+        "requestHeaderNameRequestId": "x-scan-request-id",
+        "requestHeaderNameScenarioId": "x-scan-scenario-id",
+        "requestHeaderNameRequestType": "x-scan-request-type",
+        "requestFlowrate": 100,
+        "requestTimeout": 30,
+        "requestTlsInsecureSkipVerify": true,
+        "responseFollowRedirection": false,
+        "responseMaxBodySizeScan": 10485760,
+        "happyPathOnly": false,
+        "maxRequestRetryAttempts": 5,
+        "maxScanDuration": 1800,
+        "memoryLimit": 2147483648,
+        "memoryTimeSpan": 10,
+        "reportMaxRequestSizeHappyPath": 8092,
+        "reportMaxRequestSizeTest": 8092,
+        "reportIncludeRequestBody": true,
+        "reportIncludeResponseBody": true,
+        "reportMaxHttpResponseSizeHappyPath": 8092,
+        "reportMaxBodySizeHappyPath": 8092,
+        "reportMaxHttpResponseSizeTest": 8092,
+        "reportMaxBodySizeTest": 8092,
+        "reportIssuesOnly": false,
+        "reportMaxIssues": 1000,
+        "reportMaxSize": 20971520,
+        "reportGenerateCurlCommand": true,
+        "normalizeServerUrls": true
+    },
+    "customizations": {
+        "happyPaths": {
+            "retry": 1,
+            "responsePolicy": {
+                "httpStatusExpected": true,
+                "mustBeConformant": true
+            },
+            "httpStatusExpected": []
+        },
+        "tests": {
+            "responsePolicy": {
+                "httpStatusExpected": true,
+                "mustBeConformant": true
+            }
+        }
+    },
+    "operations": {
+        "createTask": {
+            "operationId": "createTask",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/createTask/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "createTask",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "{{host}}/tasks",
+                        "method": "POST",
+                        "headers": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "requestBody": {
+                            "mode": "json",
+                            "json": {
+                                "assignees": [
+                                    "jahfotcnjmxqnyadmsotqcmnkimkpzna",
+                                    "jahfotcnjmxqnyadmsotqcmnkimkpzna",
+                                    "jahfotcnjmxqnyadmsotqcmnkimkpzna",
+                                    "jahfotcnjmxqnyadmsotqcmnkimkpzna"
+                                ],
+                                "authorId": "gogttvphvkeljrinulwfxxykinobqikv",
+                                "dependencies": [
+                                    "amzhdmkklovluohmzexqsdhdymilyzyk",
+                                    "amzhdmkklovluohmzexqsdhdymilyzyk"
+                                ],
+                                "description": "xhuctafluldrjcldoprulzvlvkmxhhzq",
+                                "endDate": "bztlgjsvciuwnkfcqklioplxytqexnix",
+                                "priority": "HIGH",
+                                "projectId": "fgettakuxxmjgzlowfryrdhbsnpvlgjd",
+                                "startDate": "oovrlvnjlpudizhewrvyfcjmvrcsvexr",
+                                "status": "CANCELLED",
+                                "title": "pzypbudsaeqrisnrcaabtkzkjcfjzeqx"
+                            }
+                        }
+                    }
+                },
+                "defaultResponse": "201",
+                "responses": {
+                    "201": {
+                        "expectations": {
+                            "httpStatus": 201
+                        }
+                    },
+                    "400": {
+                        "expectations": {
+                            "httpStatus": 400
+                        }
+                    },
+                    "500": {
+                        "expectations": {
+                            "httpStatus": 500
+                        }
+                    }
+                }
+            }
+        },
+        "deleteTask": {
+            "operationId": "deleteTask",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/deleteTask/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "deleteTask",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "{{host}}/tasks/{id}",
+                        "method": "DELETE",
+                        "paths": [
+                            {
+                                "key": "id",
+                                "value": "dlgcijtfsooogicmfqddtndaluvvfgpp"
+                            }
+                        ]
+                    }
+                },
+                "defaultResponse": "204",
+                "responses": {
+                    "204": {
+                        "expectations": {
+                            "httpStatus": 204
+                        }
+                    },
+                    "400": {
+                        "expectations": {
+                            "httpStatus": 400
+                        }
+                    },
+                    "404": {
+                        "expectations": {
+                            "httpStatus": 404
+                        }
+                    },
+                    "500": {
+                        "expectations": {
+                            "httpStatus": 500
+                        }
+                    }
+                }
+            }
+        },
+        "getTask": {
+            "operationId": "getTask",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/getTask/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "getTask",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "{{host}}/tasks/{id}",
+                        "method": "GET",
+                        "paths": [
+                            {
+                                "key": "id",
+                                "value": "djgdyxdbcciijbsbfybugbgksjwlfxcx"
+                            }
+                        ]
+                    }
+                },
+                "defaultResponse": "200",
+                "responses": {
+                    "200": {
+                        "expectations": {
+                            "httpStatus": 200
+                        }
+                    },
+                    "400": {
+                        "expectations": {
+                            "httpStatus": 400
+                        }
+                    },
+                    "404": {
+                        "expectations": {
+                            "httpStatus": 404
+                        }
+                    },
+                    "500": {
+                        "expectations": {
+                            "httpStatus": 500
+                        }
+                    }
+                }
+            }
+        },
+        "searchTasks": {
+            "operationId": "searchTasks",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/searchTasks/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "searchTasks",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "{{host}}/tasks",
+                        "method": "GET",
+                        "queries": [
+                            {
+                                "key": "assigneeId",
+                                "value": "rxxbdhbdnmudxxncdhzkxfuggdqroahm"
+                            },
+                            {
+                                "key": "page",
+                                "value": 1
+                            },
+                            {
+                                "key": "limit",
+                                "value": 20
+                            },
+                            {
+                                "key": "q",
+                                "value": "xkkbppnoeuwpdrbxogottlcgdouyotll"
+                            },
+                            {
+                                "key": "status",
+                                "value": "DONE"
+                            },
+                            {
+                                "key": "priority",
+                                "value": "HIGH"
+                            },
+                            {
+                                "key": "projectId",
+                                "value": "evvdvyrosivswkzuogmnkkxqcgoexazf"
+                            },
+                            {
+                                "key": "authorId",
+                                "value": "tpwbuguglcdfaxecokelqaklyvtrhmyp"
+                            }
+                        ]
+                    }
+                },
+                "defaultResponse": "200",
+                "responses": {
+                    "200": {
+                        "expectations": {
+                            "httpStatus": 200
+                        }
+                    },
+                    "400": {
+                        "expectations": {
+                            "httpStatus": 400
+                        }
+                    },
+                    "500": {
+                        "expectations": {
+                            "httpStatus": 500
+                        }
+                    }
+                }
+            }
+        },
+        "updateTask": {
+            "operationId": "updateTask",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/updateTask/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "updateTask",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "{{host}}/tasks/{id}",
+                        "method": "PUT",
+                        "paths": [
+                            {
+                                "key": "id",
+                                "value": "dhdjzzkzgjkzdxjphiwffnzukshhepww"
+                            }
+                        ],
+                        "headers": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "requestBody": {
+                            "mode": "json",
+                            "json": {
+                                "assignees": [
+                                    "yxjuzhbayjelcfqoedrqkvirnasmhvnf",
+                                    "yxjuzhbayjelcfqoedrqkvirnasmhvnf",
+                                    "yxjuzhbayjelcfqoedrqkvirnasmhvnf",
+                                    "yxjuzhbayjelcfqoedrqkvirnasmhvnf"
+                                ],
+                                "authorId": "oikwrltfacsqjogwcgghwbvnpvddwnzs",
+                                "completedAt": "odztjcsqydawgglsgyvlzmkedeorrfih",
+                                "dependencies": [
+                                    "iqgoleycdxubsniakztcwgwuewavxfzj",
+                                    "iqgoleycdxubsniakztcwgwuewavxfzj"
+                                ],
+                                "description": "vacqxuoumihepvjsmfsdbluatxafdwip",
+                                "endDate": "necjfqvbhaercntatwyvghhetaffiyom",
+                                "priority": "MEDIUM",
+                                "projectId": "avkmbyufaebojsdrcclfpreypuggnmtc",
+                                "startDate": "vnyichnbmivcoplodsxjmwofzqcorqzl",
+                                "status": "IN_PROGRESS",
+                                "title": "wkkrkhecbdolwwwobscvbuneklljdcgn"
+                            }
+                        }
+                    }
+                },
+                "defaultResponse": "200",
+                "responses": {
+                    "200": {
+                        "expectations": {
+                            "httpStatus": 200
+                        }
+                    },
+                    "400": {
+                        "expectations": {
+                            "httpStatus": 400
+                        }
+                    },
+                    "404": {
+                        "expectations": {
+                            "httpStatus": 404
+                        }
+                    },
+                    "500": {
+                        "expectations": {
+                            "httpStatus": 500
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "environments": {
+        "default": {
+            "variables": {
+                "host": {
+                    "from": "environment",
+                    "name": "SCAN42C_HOST",
+                    "required": false,
+                    "default": "http://localhost:8080"
+                }
+            }
+        }
+    }
+}

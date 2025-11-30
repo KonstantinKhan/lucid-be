@@ -12,13 +12,13 @@ paths:
     $ref: "./domains/tasks.yaml#/paths/~1tasks"
 
   /tasks/{taskId}:
-    $ref: "./domains/tasks.yaml#/paths/~1tasks~1{taskId}"
+    $ref: "./domains/tasks.yaml#/paths/~1tasks~1%7BtaskId%7D"
 
   /tasks/{taskId}/priority:
-    $ref: "./domains/tasks.yaml#/paths/~1tasks~1{taskId}~1priority"
+    $ref: "./domains/tasks.yaml#/paths/~1tasks~1%7BtaskId%7D~1priority"
 
   /tasks/{taskId}/time:
-    $ref: "./domains/tasks.yaml#/paths/~1tasks~1{taskId}~1time"
+    $ref: "./domains/tasks.yaml#/paths/~1tasks~1%7BtaskId%7D~1time"
 
 components:
   schemas: {}

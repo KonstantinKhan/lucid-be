@@ -1,0 +1,12 @@
+{
+  "name": "lucid-be",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Kotlin backend with OpenAPI spec bundling",
+  "scripts": {
+    "bundle-openapi": "redocly bundle specs/openapi.yaml --output specs/bundled-openapi.yaml --ext yaml"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.25.0"
+  }
+}

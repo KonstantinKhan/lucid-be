@@ -34,3 +34,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Node/npm ###
+node_modules/
+package-lock.json
+
+### Generated OpenAPI bundle ###
+specs/bundled-openapi.yaml

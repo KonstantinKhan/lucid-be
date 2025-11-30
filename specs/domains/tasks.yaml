@@ -36,6 +36,7 @@ paths:
       summary: Get task by ID
       responses:
         "200":
+          description: OK
           content:
             application/json:
               schema:
@@ -52,6 +53,7 @@ paths:
               $ref: "../components/schemas/task.yaml#/TaskUpdateRequest"
       responses:
         "200":
+          description: OK
           content:
             application/json:
               schema:
@@ -116,5 +118,5 @@ paths:
     #         application/json:
     #           schema:
     #             $ref: "../components/schemas/task-extensions.yaml#/TimeResponse"
-        "404":
-          $ref: "../components/responses/error.yaml#/NotFound"
+    #     "404":
+    #       $ref: "../components/responses/error.yaml#/NotFound"

@@ -8,15 +8,21 @@ Kotlin backend project built with the Ktor framework, implementing a Task API wi
 
 The project uses a multi-module architecture with clear dependency flow:
 
-| Module                                                   | Description                            | Documentation                                             |
-|----------------------------------------------------------|----------------------------------------|-----------------------------------------------------------|
-| [lucid-be-ktor-app](lucid-be-ktor-app)                   | HTTP server application (Ktor + Netty) | [ktor-app.md](docs/modules/ktor-app.md)                   |
-| [lucid-be-common](lucid-be-common)                       | Domain models & business logic         | [common.md](docs/modules/common.md)                       |
-| [lucid-be-transport-openapi](lucid-be-transport-openapi) | OpenAPI specs & generated models       | [transport-openapi.md](docs/modules/transport-openapi.md) |
+| Module                                                   | Description                                                | Documentation                                             |
+|----------------------------------------------------------|------------------------------------------------------------|-----------------------------------------------------------|
+| [lucid-be-ktor-app](lucid-be-ktor-app)                   | HTTP server application (Ktor + Netty)                     | [ktor-app.md](docs/modules/ktor-app.md)                   |
+| [lucid-be-common](lucid-be-common)                       | Domain models & business logic                             | [common.md](docs/modules/common.md)                       |
+| [lucid-be-transport-openapi](lucid-be-transport-openapi) | OpenAPI specs & generated models                           | [transport-openapi.md](docs/modules/transport-openapi.md) |
+| [lucid-be-mappers](lucid-be-mappers)                     | Mappers for converting between domain and transport models | [mappers.md](docs/modules/mappers.md)                     |
 
 **Module Dependency Graph:**
 ```
 lucid-be-ktor-app
+├── depends on → lucid-be-common
+├── depends on → lucid-be-transport-openapi
+└── depends on → lucid-be-mappers
+
+lucid-be-mappers
 ├── depends on → lucid-be-common
 └── depends on → lucid-be-transport-openapi
 
@@ -41,8 +47,8 @@ lucid-be-transport-openapi
 # Run application
 ./gradlew :lucid-be-ktor-app:run
 
-# Run tests
-./gradlew test
+# Run specific module tests
+./gradlew :module-name:test
 
 # Clean build
 ./gradlew clean build
@@ -59,6 +65,10 @@ See [Dependency Management Guide](docs/guides/dependencies.md) for adding librar
 ### Development Standards
 
 See [Conventions Guide](docs/guides/conventions.md) for coding standards, patterns, and best practices.
+
+### Testing
+
+This project uses both Kotlin's built-in test framework and Kotest for different modules. See [Testing Guide](docs/guides/testing.md) for comprehensive information about testing patterns and practices.
 
 ## How-To Guides
 
@@ -92,11 +102,12 @@ Understand the rationale behind technical decisions in [Architecture Decision Re
 
 Detailed module-specific information:
 
-| Module                                                 | Purpose                                | Quick Reference              |
-|--------------------------------------------------------|----------------------------------------|------------------------------|
-| [ktor-app](docs/modules/ktor-app.md)                   | HTTP server (Ktor 3.3.2, Netty engine) | Build, run, test commands    |
-| [common](docs/modules/common.md)                       | Domain models (Task, TaskStatus)       | Domain patterns, validation  |
-| [transport-openapi](docs/modules/transport-openapi.md) | Generated API models                   | Build pipeline, regeneration |
+| Module                                                 | Purpose                                                    | Quick Reference              |
+|--------------------------------------------------------|------------------------------------------------------------|------------------------------|
+| [ktor-app](docs/modules/ktor-app.md)                   | HTTP server (Ktor 3.3.2, Netty engine)                     | Build, run, test commands    |
+| [common](docs/modules/common.md)                       | Domain models (Task, TaskStatus)                           | Domain patterns, validation  |
+| [transport-openapi](docs/modules/transport-openapi.md) | Generated API models                                       | Build pipeline, regeneration |
+| [mappers](docs/modules/mappers.md)                     | Mappers for converting between domain and transport models | Mapping patterns, utilities  |
 
 ## Additional Resources
 

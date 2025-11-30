@@ -1,0 +1,62 @@
+# lucid-be-transport-openapi
+
+## Overview
+
+Module responsible for bundling modular OpenAPI specifications and generating Kotlin data classes for the API transport layer. Ensures type-safe models that match the API specification.
+
+## Build Process
+
+The module executes a 3-stage build process:
+
+1. **NPM Dependencies** - Installs @redocly/cli for specification bundling
+2. **OpenAPI Bundling** - Combines modular YAML files from `specs/` into single `specs/bundled-openapi.yaml` using Redocly CLI
+3. **Code Generation** - Generates Kotlin models from bundled specification using OpenAPI Generator
+
+## Generated Models
+
+Based on the current OpenAPI specification, the following models are generated:
+
+- `Task` - Main task entity
+- `TaskCreateRequest` - Request model for task creation
+- `TaskUpdateRequest` - Request model for task updates
+- `Error` - Standard error response model
+
+## Key Configuration
+
+- **OpenAPI Generator Version:** 7.7.0
+- **Generator Type:** `kotlin`
+- **Serialization Library:** `jackson`
+- **Package:** `com.khan366kos.transport.model`
+- **Output Directory:** `build/generated/openapi/`
+
+## Gradle Tasks
+
+- `npmInstall` - Install npm dependencies for bundling
+- `bundleOpenApi` - Bundle modular specs into single file
+- `openApiGenerate` - Generate Kotlin models from specification
+- `build` - Runs all tasks automatically
+
+## Development Notes
+
+### Generated Code Location
+
+Generated code is placed in `build/generated/openapi/` and is **not** version controlled. Always regenerate after:
+- OpenAPI specification changes
+- Clean builds
+- Fresh repository clones
+
+### Model Regeneration
+
+After updating OpenAPI specs in `specs/` directory, regenerate models:
+
+```bash
+./gradlew :lucid-be-transport-openapi:build
+```
+
+### Serialization Library
+
+This module uses Jackson for serialization (OpenAPI Generator standard), while the main application uses kotlinx.serialization (Ktor standard). Both approaches coexist intentionally for compatibility.
+
+### Manual Edits
+
+Do not manually edit generated models. All changes should be made to the OpenAPI specification files.

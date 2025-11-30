@@ -1,0 +1,266 @@
+# CLAUDE.md
+
+## Project overview
+
+This is a Kotlin backend project built with the Ktor framework.
+
+The project includes an [OpenAPI specification](#api-specification) for a "Task API".
+
+## Architecture
+
+The project uses a multi-module architecture
+
+| module                                                   | description                                                        | documentation                                             |
+|----------------------------------------------------------|--------------------------------------------------------------------|-----------------------------------------------------------|
+| [lucid-be-ktor-app](lucid-be-ktor-app)                   | An application for processing HTTP-requests and working with tasks | [ktor-app.md](docs/modules/ktor-app.md)                   |
+| [lucid-be-transport-openapi](lucid-be-transport-openapi) | OpenAPI specification bundling and Kotlin model code generation    | [transport-openapi.md](docs/modules/transport-openapi.md) |
+| [lucid-be-common](lucid-be-common)                       | Core domain models and business entities                           | [common.md](docs/modules/common.md)                       |
+
+**Module dependency graph:**
+```
+lucid-be-ktor-app
+├── project(:lucid-be-common)
+└── project(:lucid-be-transport-openapi)
+
+lucid-be-common
+└── (no project dependencies)
+
+lucid-be-transport-openapi
+└── (no project dependencies)
+```
+
+## Module Creation Pattern
+
+When creating a new Gradle module, follow these steps:
+
+1. **Register module** in `settings.gradle.kts`:
+   ```kotlin
+   include("module-name")
+   ```
+
+2. **Create directory structure**:
+   ```
+   module-name/
+   ├── build.gradle.kts
+   └── src/
+       ├── main/
+       │   ├── kotlin/com/khan366kos/{module-type}/
+       │   └── resources/
+       └── test/
+           ├── kotlin/com/khan366kos/{module-type}/
+           └── resources/
+   ```
+
+3. **Create `build.gradle.kts`**:
+   ```kotlin
+   plugins {
+       alias(libs.plugins.kotlin.jvm)
+       alias(libs.plugins.kotlin.plugin.serialization) // if needed
+   }
+
+   dependencies {
+       // Add dependencies here
+       testImplementation(libs.kotlin.test.junit)
+   }
+   ```
+
+4. **Package naming conventions**:
+   - Root package: `com.khan366kos`
+   - Module-specific examples:
+     - `ktor-app`: `com.khan366kos` (main app, no sub-package)
+     - `transport-openapi`: `com.khan366kos.transport.{model|openapi}`
+     - `common`: `com.khan366kos.common.{model|validation|...}`
+
+5. **Verify**: Run `./gradlew :module-name:build`
+
+## File Location Patterns
+
+### Application Code
+- **Entry point**: `lucid-be-ktor-app/src/main/kotlin/Application.kt`
+- **Configuration**: `lucid-be-ktor-app/src/main/kotlin/{Feature}.kt`
+  - Examples: `HTTP.kt`, `Serialization.kt`, `Databases.kt`, `Routing.kt`
+- **Mappers**: `lucid-be-ktor-app/src/main/kotlin/com/khan366kos/mappers/`
+  - Pattern: `{Entity}Mappers.kt` (e.g., `TaskMappers.kt`)
+
+### Domain Models
+- **Location**: `lucid-be-common/src/main/kotlin/com/khan366kos/common/model/`
+- **Pattern**: One file per class/enum
+- **Naming**: `{Entity}.kt`, `{Entity}Status.kt`
+  - Examples: `Task.kt`, `TaskStatus.kt`
+
+### Transport Models (Generated)
+- **Location**: `lucid-be-transport-openapi/build/generated/openapi/`
+- **Note**: Auto-generated, not version controlled
+- **Source**: OpenAPI specs in `specs/` directory
+
+### Tests
+- **Location**: Mirror `src/main/kotlin` in `src/test/kotlin`
+- **Naming**: `{Class}Test.kt`
+
+### Configuration
+- **Application config**: `lucid-be-ktor-app/src/main/resources/application.conf`
+- **Logging**: `lucid-be-ktor-app/src/main/resources/logback.xml`
+- **OpenAPI specs**: `specs/` directory (modular YAML files)
+
+## API Specification
+
+[Full API Specification](./docs/api_description.md)
+
+[API Specification Conventions](./docs/api_convention.md)
+
+## Development Conventions
+
+### Code Style
+
+- Follow Kotlin official coding conventions (`kotlin.code.style=official`)
+- Prefer immutable values (val) over mutable variables (var)
+- Use data classes for models and DTOs
+
+### Project Structure
+
+- Multi-module architecture with clear separation of concerns
+- Each module has single, well-defined responsibility
+
+### Build System
+
+- Gradle with Kotlin DSL
+- Version catalog in `gradle/libs.versions.toml` for centralized dependency management
+
+### Dependency Management
+
+**Adding a new library:**
+
+1. Add version to `gradle/libs.versions.toml`:
+   ```toml
+   [versions]
+   libraryName = "x.y.z"
+
+   [libraries]
+   library-name = { module = "group:artifact", version.ref = "libraryName" }
+   ```
+
+2. Use in module `build.gradle.kts`:
+   ```kotlin
+   dependencies {
+       implementation(libs.library.name)
+   }
+   ```
+
+**Module dependencies:**
+```kotlin
+dependencies {
+    implementation(project(":module-name"))
+}
+```
+
+**Common dependencies:**
+- **kotlinx.serialization**: `libs.kotlinx.serialization.json`
+- **kotlinx.datetime**: `libs.kotlinx.datetime`
+- **Ktor**: `libs.ktor.server.core`, `libs.ktor.serialization.kotlinx.json`, etc.
+- **Testing**: `libs.kotlin.test.junit`, `libs.ktor.server.test.host`
+
+### OpenAPI Workflow
+
+1. Update OpenAPI specifications in `specs/` directory
+2. Run `./gradlew :lucid-be-transport-openapi:build` to regenerate models
+3. Generated code is in `build/` directory and not version controlled
+4. Use generated models in `lucid-be-ktor-app` module
+
+### Serialization
+
+- **ktor-app module:** kotlinx.serialization (Ktor standard)
+- **transport-openapi module:** Jackson (OpenAPI Generator standard)
+- **common module:** kotlinx.serialization (domain models)
+- Both approaches coexist intentionally for tool compatibility
+- Mappers in ktor-app convert between domain and transport models
+
+### Database
+
+- Exposed SQL framework for database operations
+- PostgreSQL for production
+- H2 for testing
+
+### Testing
+
+- JUnit test framework
+- Ktor test host for integration tests
+
+### Git Workflow
+
+- Main branch: `main`
+- Generated code excluded from version control
+
+## Common Operations
+
+### Building and Testing
+
+```bash
+# Build specific module
+./gradlew :module-name:build
+
+# Build all modules
+./gradlew build
+
+# Clean build
+./gradlew clean build
+
+# Run tests for specific module
+./gradlew :module-name:test
+
+# Run all tests
+./gradlew test
+
+# Run application
+./gradlew :lucid-be-ktor-app:run
+
+# Regenerate OpenAPI models
+./gradlew :lucid-be-transport-openapi:build
+```
+
+### Adding a New Module
+
+```bash
+# 1. Create directory
+mkdir module-name
+
+# 2. Register in settings.gradle.kts
+# Add: include("module-name")
+
+# 3. Create build.gradle.kts
+# (See Module Creation Pattern above)
+
+# 4. Create source directories
+mkdir -p module-name/src/{main,test}/kotlin/com/khan366kos/...
+mkdir -p module-name/src/{main,test}/resources
+
+# 5. Verify
+./gradlew :module-name:build
+```
+
+### Adding a Domain Model
+
+```bash
+# 1. Create model file
+# Location: lucid-be-common/src/main/kotlin/com/khan366kos/common/model/YourEntity.kt
+
+# 2. Add @Serializable annotation
+# Use kotlinx.datetime.Instant for timestamps
+
+# 3. Create test file
+# Location: lucid-be-common/src/test/kotlin/com/khan366kos/common/model/YourEntityTest.kt
+
+# 4. Build and test
+./gradlew :lucid-be-common:build
+```
+
+### Creating Mappers
+
+```bash
+# Location: lucid-be-ktor-app/src/main/kotlin/com/khan366kos/mappers/YourEntityMappers.kt
+
+# Pattern:
+# - fun DomainEntity.toTransport(): TransportEntity
+# - fun TransportEntity.toDomain(): DomainEntity
+# - Handle time conversions (Instant <-> OffsetDateTime)
+# - Handle collection differences (emptyList <-> null)
+```

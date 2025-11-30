@@ -1,5 +1,29 @@
 # lucid-be-transport-openapi
 
+[← Back to CLAUDE.md](../../CLAUDE.md)
+
+## Quick Reference
+
+| Property | Value |
+|----------|-------|
+| **Purpose** | OpenAPI spec bundling & model generation |
+| **Generator** | OpenAPI Generator 7.7.0 (kotlin) |
+| **Bundler** | @redocly/cli |
+| **Package** | `com.khan366kos.transport.model` |
+| **Source Specs** | `specs/` directory (modular YAML) |
+| **Output** | `build/generated/openapi/` (not version controlled) |
+| **Build** | `./gradlew :lucid-be-transport-openapi:build` |
+| **Serialization** | Jackson (`@JsonProperty`) |
+
+**Build Pipeline:**
+1. `npmInstall` - Install @redocly/cli
+2. `bundleOpenApi` - Combine specs → `specs/bundled-openapi.yaml`
+3. `openApiGenerate` - Generate Kotlin models
+
+**Generated Models:** Task, TaskCreateRequest, TaskUpdateRequest, Error
+
+---
+
 ## Overview
 
 Module responsible for bundling modular OpenAPI specifications and generating Kotlin data classes for the API transport layer. Ensures type-safe models that match the API specification.

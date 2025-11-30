@@ -1,5 +1,29 @@
 # lucid-be-ktor-app
 
+[← Back to CLAUDE.md](../../CLAUDE.md)
+
+## Quick Reference
+
+| Property | Value |
+|----------|-------|
+| **Purpose** | Main HTTP server application |
+| **Framework** | Ktor 3.3.2 with Netty engine |
+| **Dependencies** | lucid-be-common, lucid-be-transport-openapi, Exposed, PostgreSQL |
+| **Package** | `com.khan366kos` |
+| **Entry Point** | `io.ktor.server.netty.EngineMain` |
+| **Build** | `./gradlew :lucid-be-ktor-app:build` |
+| **Run** | `./gradlew :lucid-be-ktor-app:run` |
+| **Port** | 8080 (default) |
+
+**Key Files:**
+- `Application.kt` - Module configuration sequence
+- `Routing.kt` - API endpoints
+- `HTTP.kt`, `Serialization.kt`, `Databases.kt` - Feature configurations
+- `application.conf` - Server & database configuration
+- `mappers/` - Domain ↔ Transport conversion
+
+---
+
 ## Overview
 
 Main HTTP server application built with Ktor framework using Netty engine. Handles all HTTP request processing for the Task API.

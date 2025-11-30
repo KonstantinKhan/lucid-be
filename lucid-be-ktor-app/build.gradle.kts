@@ -12,6 +12,13 @@ application {
 }
 
 dependencies {
+    // Domain models
+    implementation(project(":lucid-be-common"))
+    implementation(project(":lucid-be-transport-openapi"))
+
+    // kotlinx-datetime for time conversions in mappers
+    implementation(libs.kotlinx.datetime)
+
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.server.content.negotiation)

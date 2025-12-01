@@ -18,13 +18,14 @@ This document records key architectural decisions made in the lucid-be project, 
 **Status:** Accepted
 
 **Context:**
-Need to organize codebase for a Kotlin/Ktor backend with multiple concerns: HTTP handling, domain logic, and API contracts.
+Need to organize codebase for a Kotlin/Ktor backend with multiple concerns: HTTP handling, domain logic, API contracts, and model mapping.
 
 **Decision:**
-Use Gradle multi-module architecture with three distinct modules:
+Use Gradle multi-module architecture with four distinct modules:
 - `lucid-be-ktor-app` - HTTP application layer
 - `lucid-be-common` - Domain models and business logic
 - `lucid-be-transport-openapi` - API specifications and transport models
+- `lucid-be-mappers` - Mappers for converting between domain and transport models
 
 **Rationale:**
 - **Separation of Concerns:** Each module has a single, well-defined responsibility
@@ -32,6 +33,7 @@ Use Gradle multi-module architecture with three distinct modules:
 - **Independent Evolution:** Modules can evolve independently
 - **Clear Boundaries:** Explicit dependencies prevent tight coupling
 - **Build Optimization:** Modules can be built and tested independently
+- **Dedicated Mapping Layer:** Clean separation between domain and transport layers through dedicated mappers module
 
 **Consequences:**
 - **Positive:**
@@ -39,14 +41,10 @@ Use Gradle multi-module architecture with three distinct modules:
   - Easier to reason about dependencies
   - Domain logic independent of framework
   - Can swap Ktor for another framework without touching domain
+  - Dedicated mapping layer for conversions between domain and transport models
 - **Negative:**
   - Slightly more complex setup than monolith
-  - Need mappers to convert between layers
   - More files to manage
-
-**Alternatives Considered:**
-- **Single module:** Simpler but tighter coupling between layers
-- **Hexagonal/ports-and-adapters:** More complex, overkill for current scope
 
 ---
 
@@ -81,7 +79,7 @@ Use **two serialization libraries** intentionally:
   - Slightly larger dependency footprint
 
 **Conversion Strategy:**
-Mappers in `ktor-app` module handle conversion:
+Mappers in `mappers` module handle conversion:
 ```kotlin
 fun DomainModel.toTransport(): TransportModel
 fun TransportModel.toDomain(): DomainModel
@@ -130,7 +128,7 @@ Maintain **separate models** for domain and transport layers:
   - More types to maintain
 
 **Mapping Pattern:**
-Extension functions in `ktor-app/mappers/`:
+Extension functions in `mappers` module:
 ```kotlin
 // Domain has kotlinx.serialization, Instant, non-null lists
 data class Task(val assigneeIds: List<String> = emptyList())
@@ -214,6 +212,11 @@ Enforce strict dependency flow:
 ```
 lucid-be-ktor-app
 ├── depends on → lucid-be-common
+├── depends on → lucid-be-transport-openapi
+└── depends on → lucid-be-mappers
+
+lucid-be-mappers
+├── depends on → lucid-be-common
 └── depends on → lucid-be-transport-openapi
 
 lucid-be-common
@@ -226,9 +229,9 @@ lucid-be-transport-openapi
 **Rules:**
 1. **Common module** has NO dependencies on other project modules
 2. **Transport module** has NO dependencies on other project modules
-3. **Ktor-app module** depends on both common and transport
-4. **No circular dependencies** allowed
-5. **Mappers** live in ktor-app (knows about both domain and transport)
+3. **Ktor-app module** depends on common, transport, and mappers
+4. **Mappers module** depends on both common and transport (knows about both domain and transport)
+5. **No circular dependencies** allowed
 
 **Rationale:**
 - **Dependency Inversion:** Domain doesn't depend on infrastructure
@@ -236,6 +239,7 @@ lucid-be-transport-openapi
 - **Clear Boundaries:** Dependencies flow one way
 - **Testability:** Modules can be tested in isolation
 - **Build Order:** Clear build dependency graph
+- **Dedicated Mapping Layer:** Separates conversion logic from application logic
 
 **Consequences:**
 - **Positive:**
@@ -243,13 +247,16 @@ lucid-be-transport-openapi
   - Domain is portable
   - Clear responsibility boundaries
   - Prevents coupling
+  - Dedicated mapping layer for conversions between domain and transport models
 - **Negative:**
   - Must think about where code belongs
   - Cannot reference app code from domain
+  - Additional module to manage
 
 **Alternatives Considered:**
 - **Bidirectional dependencies:** Creates coupling, harder to maintain
 - **All code in one module:** Simpler but loses benefits of separation
+- **Mappers in ktor-app module:** Would couple application logic with mapping logic
 
 ---
 
@@ -309,5 +316,6 @@ These architectural decisions collectively create a **clean, maintainable, and s
 4. **Type-appropriate** time handling per layer
 5. **Strict dependencies** prevent coupling
 6. **OpenAPI-first** ensures contract clarity
+7. **Dedicated mapping layer** for conversions between domain and transport models
 
 The architecture prioritizes **long-term maintainability** over short-term simplicity, making strategic trade-offs that benefit the project as it scales.

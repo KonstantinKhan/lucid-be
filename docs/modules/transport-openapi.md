@@ -30,6 +30,8 @@
 Module responsible for bundling modular OpenAPI specifications and generating Kotlin data classes for the API transport
 layer. Ensures type-safe models that match the API specification.
 
+**OpenAPI spec structure**: See [API Specification](../api_description.md) for file organization and [API Conventions](../api_convention.md) for composition principles.
+
 ## Build Process
 
 The module executes a 3-stage build process:
@@ -75,11 +77,7 @@ Generated code is placed in `build/generated/openapi/` and is **not** version co
 
 ### Model Regeneration
 
-After updating OpenAPI specs in `specs/` directory, regenerate models:
-
-```bash
-./gradlew :lucid-be-transport-openapi:build
-```
+After updating OpenAPI specs in `specs/` directory, regenerate models. See [Common Commands](../../CLAUDE.md#common-commands) in CLAUDE.md. Use `./gradlew :lucid-be-transport-openapi:build` for this module.
 
 ### Serialization Library
 

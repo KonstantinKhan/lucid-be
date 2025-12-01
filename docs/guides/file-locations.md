@@ -83,9 +83,9 @@ See [API Specification](../api_description.md) for details.
 - **Purpose**: Logging levels and output configuration
 
 ### OpenAPI Specifications
-- **Location**: `specs/` directory
-- **Format**: Modular YAML files
+- **Location**: `specs/` directory (modular YAML files)
 - **Bundled output**: `specs/bundled-openapi.yaml` (generated, not version controlled)
+- **Details**: See [API Specification](../api_description.md) for structure and [API Conventions](../api_convention.md) for composition principles
 
 ## Package Naming Conventions
 

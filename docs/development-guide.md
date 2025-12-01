@@ -98,23 +98,7 @@ Follow the project's package naming pattern:
 
 ### Module Dependency Guidelines
 
-When adding dependencies to your module's `build.gradle.kts`:
-
-**Allowed dependency flows**:
-```
-application-module → common-module ✓
-application-module → transport-module ✓
-common-module → (no project dependencies) ✓
-transport-module → (no project dependencies) ✓
-```
-
-**NOT allowed**:
-```
-common-module → application-module ✗ (circular)
-transport-module → common-module ✗ (wrong direction)
-```
-
-See [Module Dependency Principles ADR](../architecture-decisions.md#5-module-dependency-principles) for detailed rationale.
+Follow strict dependency flow: `ktor-app` depends on `common`, `transport-openapi`, and `mappers`; `mappers` depends on `common` and `transport-openapi`; `common` and `transport-openapi` have no project dependencies. See [Module Dependency Principles ADR](../architecture-decisions.md#5-module-dependency-principles) for complete rules and rationale.
 
 ### Example: Creating a utilities module
 
@@ -331,7 +315,7 @@ Mappers convert between domain models (common module) and transport models (Open
 
 ### Location
 
-`lucid-be-ktor-app/src/main/kotlin/com/khan366kos/mappers/YourEntityMappers.kt`
+`lucid-be-mappers/src/main/kotlin/com/khan366kos/mappers/YourEntityMappers.kt`
 
 ### Template
 
@@ -340,139 +324,36 @@ package com.khan366kos.mappers
 
 import com.khan366kos.common.model.YourEntity as DomainEntity
 import com.khan366kos.transport.model.YourEntity as TransportEntity
-import kotlinx.datetime.Instant
-import kotlinx.datetime.toJavaInstant
-import kotlinx.datetime.toKotlinInstant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 
 // Domain -> Transport
-
 fun DomainEntity.toTransport(): TransportEntity = TransportEntity(
     id = this.id,
     name = this.name,
-    createdAt = this.createdAt.toOffsetDateTime(),
-    updatedAt = this.updatedAt.toOffsetDateTime()
-    // Map other properties
+    // Map other properties using conversion helpers
 )
 
 // Transport -> Domain
-
 fun TransportEntity.toDomain(): DomainEntity = DomainEntity(
     id = this.id,
     name = this.name,
-    createdAt = this.createdAt.toKotlinInstant(),
-    updatedAt = this.updatedAt.toKotlinInstant()
-    // Map other properties
+    // Map other properties using conversion helpers
 )
-
-// Time conversion helpers
-
-private fun Instant.toOffsetDateTime(): OffsetDateTime =
-    OffsetDateTime.ofInstant(this.toJavaInstant(), ZoneOffset.UTC)
-
-private fun OffsetDateTime.toKotlinInstant(): Instant {
-    val javaInstant: java.time.Instant = this.toInstant()
-    return javaInstant.toKotlinInstant()
-}
 ```
 
 ### Key Conversion Patterns
 
-**Time Types:**
-- Domain: `kotlinx.datetime.Instant`
-- Transport: `java.time.OffsetDateTime`
-- Always use UTC timezone
-
-**Collections:**
-- Domain: Non-null with default empty list
-- Transport: Nullable list
-- Convert: `domainList.takeIf { it.isNotEmpty() }` (domain → transport)
-- Convert: `transportList ?: emptyList()` (transport → domain)
-
-**Enums:**
-- Domain: UPPERCASE (e.g., `NEW`, `IN_PROGRESS`)
-- Transport: snake_case (e.g., `new`, `in_progress`)
-- Use `when` expressions for mapping
+See [mappers module](../modules/mappers.md) for complete conversion patterns including:
+- Time type conversion (`Instant` ↔ `OffsetDateTime`)
+- Collection handling (null vs empty lists)
+- Enum value mapping (UPPERCASE ↔ snake_case)
 
 ## Adding Dependencies
 
-### Step 1: Add to Version Catalog
-
-Location: `gradle/libs.versions.toml`
-
-```toml
-[versions]
-# Add version
-myLibrary = "1.2.3"
-
-[libraries]
-# Add library reference
-my-library = { module = "com.example:my-library", version.ref = "myLibrary" }
-```
-
-### Step 2: Use in Module
-
-Location: `{module-name}/build.gradle.kts`
-
-```kotlin
-dependencies {
-    implementation(libs.my.library)
-}
-```
-
-### Step 3: Rebuild
-
-```bash
-./gradlew build
-```
+See [Dependency Management Guide](guides/dependencies.md#adding-a-new-library) for step-by-step instructions on adding dependencies using the version catalog pattern.
 
 ## Testing Patterns
 
-### Domain Model Tests
-
-```kotlin
-class EntityTest {
-    // Valid creation
-    @Test
-    fun `entity creation succeeds`() { }
-
-    // Validation rules
-    @Test
-    fun `entity with invalid data fails`() {
-        assertFailsWith<IllegalArgumentException> { }
-    }
-
-    // Serialization
-    @Test
-    fun `entity serialization works`() {
-        val json = Json.encodeToString(entity)
-        val deserialized = Json.decodeFromString<Entity>(json)
-        assertEquals(entity, deserialized)
-    }
-
-    // Copy functionality
-    @Test
-    fun `entity copy updates fields`() {
-        val updated = entity.copy(name = "New Name")
-        assertEquals("New Name", updated.name)
-    }
-}
-```
-
-### Ktor Integration Tests
-
-```kotlin
-class RoutingTest {
-    @Test
-    fun `GET endpoint returns data`() = testApplication {
-        client.get("/endpoint").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            // Assert response
-        }
-    }
-}
-```
+See [Testing Guide](guides/testing.md) for comprehensive testing patterns, frameworks, and examples including domain model tests, mapper tests, and integration tests.
 
 ## Common Gotchas
 
@@ -500,13 +381,7 @@ private fun OffsetDateTime.toKotlinInstant(): Instant {
 
 **Problem:** Circular dependencies between modules.
 
-**Solution:** Follow dependency flow:
-```
-ktor-app → common
-ktor-app → transport-openapi
-common: no dependencies
-transport-openapi: no dependencies
-```
+**Solution:** Follow strict dependency flow. See [Module Dependency Principles ADR](../architecture-decisions.md#5-module-dependency-principles) for complete rules.
 
 ### 3. Serialization Annotations
 
@@ -540,25 +415,7 @@ val task = Task(id = "1", title = "Valid Title")
 
 ## Quick Commands Reference
 
-```bash
-# Build everything
-./gradlew build
-
-# Build specific module
-./gradlew :module-name:build
-
-# Run tests
-./gradlew test
-
-# Run application
-./gradlew :lucid-be-ktor-app:run
-
-# Regenerate OpenAPI models
-./gradlew :lucid-be-transport-openapi:build
-
-# Clean build
-./gradlew clean build
-```
+See [Common Commands](../CLAUDE.md#common-commands) in CLAUDE.md for all Gradle commands.
 
 ## Next Steps
 

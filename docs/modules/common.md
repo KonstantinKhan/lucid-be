@@ -155,16 +155,7 @@ val domainTask = transportTask.toDomain()
 
 ## Build
 
-```bash
-# Build common module
-./gradlew :lucid-be-common:build
-
-# Run tests
-./gradlew :lucid-be-common:test
-
-# Build all modules
-./gradlew build
-```
+**Build/Test**: See [Common Commands](../../CLAUDE.md#common-commands) in CLAUDE.md. Use `./gradlew :lucid-be-common:build` and `./gradlew :lucid-be-common:test` for this module.
 
 ## Testing
 
@@ -177,11 +168,6 @@ Test coverage includes:
 - Data class copy functionality
 - All status values
 - Optional fields handling
-
-Run tests:
-```bash
-./gradlew :lucid-be-common:test
-```
 
 ## Future Enhancements
 

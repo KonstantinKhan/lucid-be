@@ -59,20 +59,7 @@ class MyTest : ShouldSpec({
 
 ## Running Tests
 
-To run all tests in the project:
-```bash
-./gradlew test
-```
-
-To run tests for a specific module:
-```bash
-./gradlew :lucid-be-mappers:test
-```
-
-To run tests with more verbose output:
-```bash
-./gradlew test --info
-```
+See [Common Commands](../../CLAUDE.md#common-commands) in CLAUDE.md for test commands. Use `./gradlew :module-name:test` for specific modules.
 
 ## Test Coverage
 

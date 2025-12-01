@@ -24,6 +24,46 @@ The module includes helper functions for handling time conversions between diffe
 - `Instant.toOffsetDateTime()` - Converts from Kotlinx `Instant` to Java `OffsetDateTime`
 - `OffsetDateTime.toKotlinInstant()` - Converts from Java `OffsetDateTime` to Kotlinx `Instant`
 
+**Canonical conversion pattern:**
+
+```kotlin
+import kotlinx.datetime.Instant
+import kotlinx.datetime.toJavaInstant
+import kotlinx.datetime.toKotlinInstant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+
+// Instant -> OffsetDateTime (domain to transport)
+private fun Instant.toOffsetDateTime(): OffsetDateTime =
+    OffsetDateTime.ofInstant(this.toJavaInstant(), ZoneOffset.UTC)
+
+// OffsetDateTime -> Instant (transport to domain)
+private fun OffsetDateTime.toKotlinInstant(): Instant {
+    val javaInstant: java.time.Instant = this.toInstant()
+    return javaInstant.toKotlinInstant()
+}
+```
+
+### Conversion Patterns
+
+**Time Types:**
+- Domain: `kotlinx.datetime.Instant` (UTC, multiplatform)
+- Transport: `java.time.OffsetDateTime` (OpenAPI standard)
+- Always use UTC timezone
+
+**Collections:**
+- Domain: Non-null with default empty list
+- Transport: Nullable list
+- Convert: `domainList.takeIf { it.isNotEmpty() }` (domain → transport)
+- Convert: `transportList ?: emptyList()` (transport → domain)
+
+**Enums:**
+- Domain: UPPERCASE (e.g., `NEW`, `IN_PROGRESS`)
+- Transport: snake_case (e.g., `new`, `in_progress`)
+- Use `when` expressions for mapping
+
+See [Time Type Choices ADR](../architecture-decisions.md#4-time-type-choices) for rationale.
+
 ## Dependencies
 
 - `lucid-be-common` - Provides domain models
@@ -42,10 +82,7 @@ The mappers module includes comprehensive tests using the Kotest framework to en
 - Time conversion accuracy
 - Round-trip mapping preservation
 
-Run the tests with:
-```bash
-./gradlew :lucid-be-mappers:test
-```
+**Build/Test**: See [Common Commands](../../CLAUDE.md#common-commands) in CLAUDE.md. Use `./gradlew :lucid-be-mappers:test` for this module.
 
 ## Usage
 
@@ -56,4 +93,4 @@ val domainTask: DomainTask = transportTask.toDomain()
 val transportTask: TransportTask = domainTask.toTransport()
 ```
 
-This module is used by the Ktor application layer to convert between internal domain representations and API transport objects when handling HTTP requests and responses.
+This module is a dependency of the Ktor application layer and provides conversion between internal domain representations and API transport objects when handling HTTP requests and responses.

@@ -43,6 +43,7 @@ The project uses a multi-module architecture with clear separation of concerns:
 lucid-be-ktor-app       - Application layer (HTTP server)
 lucid-be-common         - Domain layer (business logic)
 lucid-be-transport-openapi  - Transport layer (API contracts)
+lucid-be-mappers        - Mapping layer (conversion between domain and transport models)
 ```
 
 ### Design Principles
@@ -80,22 +81,7 @@ dependencies {
 
 ### Common Build Commands
 
-```bash
-# Build all modules
-./gradlew build
-
-# Build specific module
-./gradlew :module-name:build
-
-# Clean build
-./gradlew clean build
-
-# Run tests
-./gradlew test
-
-# Run application
-./gradlew :lucid-be-ktor-app:run
-```
+See [Common Commands](../../CLAUDE.md#common-commands) in CLAUDE.md for all Gradle commands.
 
 ## OpenAPI Workflow
 
@@ -127,75 +113,11 @@ See [OpenAPI-First API Design ADR](../architecture-decisions.md#6-openapi-first-
 
 ## Serialization Strategy
 
-### Dual Serialization Approach
-
-The project intentionally uses two serialization libraries:
-
-#### kotlinx.serialization
-
-**Used in**: `ktor-app` and `common` modules
-
-- **Why**: Ktor standard, Kotlin-native, multiplatform compatible
-- **Annotation**: `@Serializable`
-- **Use case**: Domain models, internal serialization
-
-#### Jackson
-
-**Used in**: `transport-openapi` module (generated code)
-
-- **Why**: OpenAPI Generator default, industry standard for REST APIs
-- **Annotation**: `@JsonProperty` (generated)
-- **Use case**: Transport models, API contracts
-
-### Mapper Pattern
-
-Mappers in `ktor-app` module handle conversion:
-
-```kotlin
-// Domain -> Transport
-fun DomainModel.toTransport(): TransportModel
-
-// Transport -> Domain
-fun TransportModel.toDomain(): DomainModel
-```
-
-**Location**: `lucid-be-ktor-app/src/main/kotlin/com/khan366kos/mappers/`
-
-See [Dual Serialization Strategy ADR](../architecture-decisions.md#2-dual-serialization-strategy) for full explanation.
+The project uses two serialization libraries: **kotlinx.serialization** for domain models (`common`, `ktor-app`) and **Jackson** for transport models (`transport-openapi`). Mappers handle conversion between layers. See [Dual Serialization Strategy ADR](../architecture-decisions.md#2-dual-serialization-strategy) for complete rationale and [mappers module](../modules/mappers.md) for implementation details.
 
 ## Time Type Handling
 
-### Different Types for Different Layers
-
-The project uses different time types optimized for each layer:
-
-#### Domain Layer (common module)
-
-- **Type**: `kotlinx.datetime.Instant`
-- **Why**: Timezone-agnostic (UTC), multiplatform compatible, simpler
-- **Use case**: Business logic, storage
-
-#### Transport Layer (transport-openapi module)
-
-- **Type**: `java.time.OffsetDateTime`
-- **Why**: OpenAPI Generator default, preserves timezone offset
-- **Use case**: API requests/responses
-
-### Conversion Pattern
-
-```kotlin
-// Instant -> OffsetDateTime (domain to transport)
-private fun Instant.toOffsetDateTime(): OffsetDateTime =
-    OffsetDateTime.ofInstant(this.toJavaInstant(), ZoneOffset.UTC)
-
-// OffsetDateTime -> Instant (transport to domain)
-private fun OffsetDateTime.toKotlinInstant(): Instant {
-    val javaInstant: java.time.Instant = this.toInstant()
-    return javaInstant.toKotlinInstant()
-}
-```
-
-See [Time Type Choices ADR](../architecture-decisions.md#4-time-type-choices) for detailed rationale.
+Domain models use `kotlinx.datetime.Instant` (UTC, multiplatform), transport models use `java.time.OffsetDateTime` (OpenAPI standard). Mappers handle conversion. See [Time Type Choices ADR](../architecture-decisions.md#4-time-type-choices) for rationale and [mappers module](../modules/mappers.md) for conversion patterns.
 
 ## Database
 
@@ -224,49 +146,7 @@ transaction {
 
 ## Testing
 
-### Frameworks & Tools
-
-- **Unit Tests**: Kotlin Test with JUnit
-- **Integration Tests**: Ktor test host
-- **Assertions**: Kotlin test assertions (`assertEquals`, `assertFailsWith`, etc.)
-
-### Testing Patterns
-
-1. **Domain Model Tests**:
-   - Valid object creation
-   - Validation rules enforcement
-   - Serialization round-trips
-   - Data class copy functionality
-
-2. **Mapper Tests**:
-   - Domain ↔ Transport conversion accuracy
-   - Time type conversion correctness
-   - Collection handling (null vs empty)
-
-3. **API Integration Tests**:
-   - HTTP status codes
-   - Request/response structure
-   - Error handling
-
-### Test Structure
-
-```kotlin
-class EntityTest {
-    @Test
-    fun `entity creation with valid data succeeds`() {
-        // Arrange, Act, Assert
-    }
-
-    @Test
-    fun `entity with invalid data fails validation`() {
-        assertFailsWith<IllegalArgumentException> {
-            // Invalid entity creation
-        }
-    }
-}
-```
-
-See [Testing Patterns](../development-guide.md#testing-patterns) for detailed examples.
+The project uses Kotlin Test (JUnit) for unit tests and Ktor test host for integration tests. Test levels: domain model tests, mapper tests, API integration tests. See [Testing Guide](./testing.md) for comprehensive patterns, frameworks, and examples.
 
 ## Git Workflow
 
@@ -299,36 +179,7 @@ See [Testing Patterns](../development-guide.md#testing-patterns) for detailed ex
 
 ## Module Dependency Rules
 
-### Strict Dependency Flow
-
-```
-lucid-be-ktor-app
-├── depends on → lucid-be-common ✓
-└── depends on → lucid-be-transport-openapi ✓
-
-lucid-be-common
-└── no project dependencies ✓
-
-lucid-be-transport-openapi
-└── no project dependencies ✓
-```
-
-### Rules
-
-1. **Common module**: NO dependencies on other project modules (pure domain)
-2. **Transport module**: NO dependencies on other project modules (pure contracts)
-3. **Ktor-app module**: Depends on both common and transport (integration layer)
-4. **No circular dependencies**: Dependencies flow in one direction only
-5. **Mappers live in ktor-app**: Only ktor-app knows about both domain and transport
-
-### Why These Rules?
-
-- **Dependency Inversion**: Infrastructure depends on domain, not the other way
-- **Reusability**: Common and transport modules can be used independently
-- **Testability**: Modules can be tested in isolation
-- **Maintainability**: Clear boundaries prevent tight coupling
-
-See [Module Dependency Principles ADR](../architecture-decisions.md#5-module-dependency-principles) for complete explanation.
+Follow strict dependency flow: `ktor-app` depends on `common`, `transport-openapi`, and `mappers`; `mappers` depends on `common` and `transport-openapi`; `common` and `transport-openapi` have no project dependencies. No circular dependencies allowed. See [Module Dependency Principles ADR](../architecture-decisions.md#5-module-dependency-principles) for complete rules, rationale, and examples.
 
 ## Domain Model Patterns
 

@@ -53,6 +53,11 @@ Follow module dependency rules to prevent circular dependencies:
 ```
 ktor-app
 ├── depends on → common ✓
+├── depends on → transport-openapi ✓
+└── depends on → mappers ✓
+
+mappers
+├── depends on → common ✓
 └── depends on → transport-openapi ✓
 
 common
@@ -65,7 +70,10 @@ transport-openapi
 **What's NOT allowed:**
 - `common` → `ktor-app` ✗ (circular dependency)
 - `common` → `transport-openapi` ✗ (violates dependency inversion)
+- `common` → `mappers` ✗ (violates dependency inversion)
 - `transport-openapi` → `common` ✗ (violates separation)
+- `transport-openapi` → `mappers` ✗ (violates separation)
+- `mappers` → `ktor-app` ✗ (circular dependency)
 
 See [Module Dependency Principles](../architecture-decisions.md#5-module-dependency-principles) for rationale.
 

@@ -56,20 +56,14 @@ Main HTTP server application built with Ktor framework using Netty engine. Handl
 
 ## Running
 
-Build and run the application:
+**Build/Run**: See [Common Commands](../../CLAUDE.md#common-commands) in CLAUDE.md. Module-specific command:
 
 ```bash
-# Build all modules
-./gradlew build
-
 # Run the application
 ./gradlew :lucid-be-ktor-app:run
 
 # Run with custom port
 PORT=9090 ./gradlew :lucid-be-ktor-app:run
-
-# Run tests
-./gradlew :lucid-be-ktor-app:test
 ```
 
 ## Integration with Other Modules
